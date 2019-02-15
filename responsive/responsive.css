@@ -1,17 +1,8 @@
 
-
-/* 625 × 625 */
-
 /* 
 html says this:
 <div class="homer"></div> 
 */
-
-/* If the browser screen width is greater than 1600 pixels, display the top-left image of homer.jpg */
-
-
-/* height and width of section I want to display, starting at top left corner (0,0) */
-
 
 
 @media only screen
