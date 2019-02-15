@@ -20,7 +20,6 @@ and (max-width: 1600px)
 .homer {width:312px; height:312px; background:url(homer.jpg) 312px 0px;}
 }
 
-
 @media only screen
 and (min-width: 1200px)
 and (max-width: 1400px)
