@@ -1,1 +1,1 @@
-# comp20-elai hi
+# comp20-elai
