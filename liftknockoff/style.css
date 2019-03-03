@@ -1,1 +1,27 @@
 /* style */
+/* Absolutely necessary for Google Maps version 3 */
+html {
+	height: 80%;
+	font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Absolutely necessary for Google Maps version 3 */
+body {
+	height: 80%;
+	margin: 0px;
+	padding: 0px;
+}
+
+#map_canvas {
+	width: 90%;
+	height: 90%;
+}
+
+.fun {
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	font-size: 58px;
+	color: magenta;
+}
+
+
+

@@ -1,2 +1,155 @@
 <!-- HTML -->
 
+<!DOCTYPE html>
+
+
+<html>
+<head>
+	<title>Messages</title>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" charset="utf-8"/>
+
+
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9sQaGQMUn1TEZG3C11LjRlpQAppS4WGk"></script>
+	
+	
+	<script>
+
+	var lat = 0;
+	var lng = 0;
+
+	var me = new google.maps.LatLng(lat, lng);
+	var myOptions = {
+		zoom: 13, // The larger the zoom number, the bigger the zoom
+		center: me,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	var map;
+	var marker;
+	var infowindow = new google.maps.InfoWindow();
+
+
+	function getLocation() 
+	{
+		// initialize, create the map in the "map_canvas" <div>
+		map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+
+
+		navigator.geolocation.getCurrentPosition(function(somePos) 
+		{
+			console.log("I am here 2");
+			lat = somePos.coords.latitude;
+			lng = somePos.coords.longitude;
+			printLocation();
+
+
+
+			mapMe();
+
+			// I JUST PUT THIS HERE INSTEAD
+			requestResponse();
+		}
+		);
+		console.log("I am here 3");
+	}
+
+	function printLocation() 
+	{
+		console.log("I am here 4");
+		elem = document.getElementById("location");
+		elem.innerHTML = '<p class="fun">' + lat + ", AND " + lng + "</p>";
+	}
+
+	function mapMe()
+	{
+		me = new google.maps.LatLng(lat,lng);
+		map.panTo(me); // update map and go there
+
+		marker = new google.maps.Marker({
+			position: me,
+			title: "Here I Am!"
+		});
+		marker.setMap(map);
+
+		// Open info window on click of marker
+		google.maps.event.addListener(marker, 'click', function() {
+			infowindow.setContent(marker.title);
+			infowindow.open(map, marker);
+		});
+
+	}
+
+
+
+	function requestResponse() 
+	{
+		// Step 1: make an instance of XHR
+		console.log("about to start xml request");
+		request = new XMLHttpRequest();
+		// Step 2: Make request to the JSON source
+		request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
+		
+		request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+		//request.setRequestHeader("Content-Type", "text/xml;charset=utf-8");
+
+		console.log("THE PARAMETERS IM SENDING ARE");
+		console.log("username=qg9kB6z3&lat=" + lat + "&lng=" + lng);
+		myParameters = "username=qg9kB6z3&lat=" + lat + "&lng=" + lng
+
+		// Step 4: Fire off request!!!
+		request.send(myParameters);
+
+
+		// Step 3: What to do when we get a response back
+		request.onreadystatechange = function() 
+		{
+			// Step 5: parse the JSON data from response
+			if (request.readyState == 4 && request.status == 200) 
+			{
+				console.log("Got the data back!");
+
+				data = request.responseText;
+				console.log(data);
+
+				console.log("^just printed data!");
+
+				vehicles = JSON.parse(request.responseText);
+				//tweets = JSON.parse(request.responseText);
+
+				console.log(vehicles);
+
+/*
+				vehiclesSection = document.getElementById("vehicles");
+				//messagesSection = document.getElementById("messages");
+
+				vehiclesSection.innerHTML = "";
+				for (count = 0 ; count < vehicles.length ; count++) 
+				{
+					vehiclesSection.innerHTML += "<p>" + vehicles[count].content + " from " + vehicles[count].username + "</p>";
+				}
+*/
+
+			}
+		};
+	
+	}
+	</script>
+</head>
+
+
+<body onload="getLocation()">
+	<h1>Where Am I</h1>
+	<div id="location">Trying to determine location...</div>
+
+	<div id="map_canvas"></div>
+
+	<h1>Messages</h1>
+	<div id="messages">Loading...</div>
+</body>
+
+
+
+
+
+</html>
+
