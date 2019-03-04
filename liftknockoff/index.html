@@ -6,14 +6,15 @@
 
 <html>
 <head>
-	<title>Messages</title>
+	<title>EMAI'S LIFT KNOCKOFF</title>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" charset="utf-8"/>
 	<link rel="stylesheet" href="style.css" />
 
 
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEerJkvR6bTT6i9BDteyiIXJiNXKjh7JQ"></script>
-	
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEerJkvR6bTT6i9BDteyiIXJiNXKjh7JQ&libraries=geometry"></script>
 
+
+	
 	<script>
 
 	var lat = 0;
@@ -35,24 +36,18 @@
 
 
 	var myIcon = {
-	    url: "http://www.clker.com/cliparts/1/q/n/y/6/4/map-pin-purple-md.png", // url
-	    scaledSize: new google.maps.Size(25, 40), // scaled size
-	    //origin: new google.maps.Point(0,0), // origin
-	    //anchor: new google.maps.Point(0, 0) // anchor
+	    url: "http://www.clker.com/cliparts/1/q/n/y/6/4/map-pin-purple-md.png", 
+	    scaledSize: new google.maps.Size(25, 40)
 	};
 
 	var vehicleIcon = {
-	    url: "https://tuftsdev.github.io/WebProgramming/assignments/car.png", // url
-	    scaledSize: new google.maps.Size(20, 45), // scaled size
-	    //origin: new google.maps.Point(0,0), // origin
-	    //anchor: new google.maps.Point(0, 0) // anchor
+	    url: "https://tuftsdev.github.io/WebProgramming/assignments/car.png", 
+	    scaledSize: new google.maps.Size(20, 45)
 	};
 
 	var weinermobileIcon = {
-	    url: "https://tuftsdev.github.io/WebProgramming/assignments/weinermobile.png", // url
-	    scaledSize: new google.maps.Size(40, 40), // scaled size
-	    //origin: new google.maps.Point(0,0), // origin
-	    //anchor: new google.maps.Point(0, 0) // anchor
+	    url: "https://tuftsdev.github.io/WebProgramming/assignments/weinermobile.png", 
+	    scaledSize: new google.maps.Size(40, 40)
 	};
 
 	
@@ -65,6 +60,8 @@
 		mapMe();
 
 		mapThem();
+
+
 		
 	}
 
@@ -73,14 +70,17 @@
 		// get my location
 		navigator.geolocation.getCurrentPosition(function(somePos) 
 		{
-			// DELETE THIS LATER
-			console.log("I am here 2");
+		
 			lat = somePos.coords.latitude;
 			lng = somePos.coords.longitude;
 			
 			printLocation();
 
 			me = new google.maps.LatLng(lat,lng);
+
+			console.log("MEEEE");
+			//console.log(me.lat);
+
 			map.panTo(me); // update map and go there
 
 			//CHANGE ME LATER
@@ -100,7 +100,7 @@
 				infowindow.setContent(marker.title);
 				infowindow.open(map, marker);
 			});
-		
+
 		}
 		);
 	}
@@ -127,13 +127,22 @@
 		request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
 		//request.setRequestHeader("Content-Type", "text/xml;charset=utf-8");
 
-		console.log("THE PARAMETERS IM SENDING ARE");
-		console.log("username=qg9kB6z3&lat=" + lat + "&lng=" + lng);
-		myParameters = "username=qg9kB6z3&lat=" + lat + "&lng=" + lng
 
-		// Step 4: Fire off request!!!
-		request.send(myParameters);
+		navigator.geolocation.getCurrentPosition(function(somePos) 
+		{
+			lat = somePos.coords.latitude;
+			lng = somePos.coords.longitude;
+			console.log("LAT" + lat);
 
+			console.log("THE PARAMETERS IM SENDING ARE");
+			console.log("username=qg9kB6z3&lat=" + lat + "&lng=" + lng);
+			myParameters = "username=qg9kB6z3&lat=" + lat + "&lng=" + lng
+
+			// Step 4: Fire off request!!!
+		 	request.send(myParameters);
+
+		});
+		
 
 		// Step 3: What to do when we get a response back
 		request.onreadystatechange = function() 
@@ -144,63 +153,27 @@
 				data = request.responseText;
 				console.log(data);
 
-				vehiclesArray = JSON.parse(request.responseText);
+				responseArray = JSON.parse(request.responseText);
 	
-				console.log(vehiclesArray);
+				console.log(responseArray);
 
-				console.log(vehiclesArray.vehicles.length);
+				console.log("LENGTH is " + responseArray.vehicles.length);
+
+				var weinermobileExists = false;
 				
-
-
-/*
-				them = new google.maps.LatLng(42.40,-71.11);
-		
-				markerThem = new google.maps.Marker({
-					position: them,
-					title: "They Are Here! "
-				});
-
-				markerThem.setMap(map);
-*/
-				
-    			//document.getElementById("demo").innerHTML = vehicles.name;
-				console.log("ELEMENT 0 lat is");
-				console.log(vehiclesArray.vehicles[0].lat);
-
-
-				//var them;
-				//var markerThem;
-/*
-				for (count = 0; count < vehiclesArray.vehicles.length; count++)
-				{
-					them[count] = new google.maps.LatLng(lat,lng);
-				}
-*/
-
-	
-
-				
-
-				for (count = 0; count < vehiclesArray.vehicles.length; count++)
+				for (count = 0; count < responseArray.vehicles.length; count++)
 				{
 
-					if (vehiclesArray.vehicles[count].username == "WEINERMOBILE")
-					{
-						console.log("WEINNNERMOBILEEEE");
-					}
-
-
-
-
-					var theirLat = vehiclesArray.vehicles[count].lat
-					var theirLng = vehiclesArray.vehicles[count].lng
-					console.log(theirLat + "AND" + theirLng);
+					var theirLat = responseArray.vehicles[count].lat
+					var theirLng = responseArray.vehicles[count].lng
+					console.log(theirLat + "AND" + theirLng); // DELETE LATER
 
 					them = new google.maps.LatLng(theirLat,theirLng);
 
-					if (vehiclesArray.vehicles[count].username == "WEINERMOBILE")
+					if (responseArray.vehicles[count].username == "WEINERMOBILE")
 					{
 						console.log("WEINNNERMOBILEEEE");
+						weinermobileExists = true;
 
 						markerThem = new google.maps.Marker({
 							position: them,
@@ -208,6 +181,13 @@
 							title: "They Are Here! ",
 							icon: weinermobileIcon
 						});
+
+						var distToWeiner;
+						findDistance();
+
+						
+				
+
 					}
 					else {
 						markerThem = new google.maps.Marker({
@@ -220,7 +200,7 @@
 					// Open info window on click of marker
 				    google.maps.event.addListener(markerThem, 'click', (function(markerThem, count) {
 				        return function() {
-				          infowindow.setContent(vehiclesArray.vehicles[count].username);
+				          infowindow.setContent(responseArray.vehicles[count].username);
 				         //infowindow.setContent(markerThem.title);
 				          infowindow.open(map, markerThem);
 				        }
@@ -229,42 +209,33 @@
 			
 					//map.panTo(them); //??
 			
-
-
-
 					markerThem.setMap(map);
 				}
 				//markerThem.setMap(map);
 
-
-/*
-				vehiclesSection = document.getElementById("vehicles");
-				//messagesSection = document.getElementById("messages");
-
-				vehiclesSection.innerHTML = "";
-				for (count = 0 ; count < vehicles.length ; count++) 
+				if (weinermobileExists == false)
 				{
-					vehiclesSection.innerHTML += "<p>" + vehicles[count].content + " from " + vehicles[count].username + "</p>";
+
 				}
-*/
+
 
 			}
 		};
 	
 	}
 
-function mapThem2()
-	{
-		them = new google.maps.LatLng(42.40,-71.11);
-		
-		markerThem = new google.maps.Marker({
-			position: them,
-			title: "They Are Here! "
-		});
 
-		markerThem.setMap(map);
 
-	}
+function findDistance()
+{
+	distToWeiner = google.maps.geometry.spherical.computeDistanceBetween(me, them);
+	console.log("DIST to weiner is" + distToWeiner);
+	// convert distance from meters to miles
+	distToWeiner = distToWeiner * 0.000621371; 
+	console.log("NEWDIST to weiner is" + distToWeiner);
+
+}
+
 
 
 	</script>
@@ -272,7 +243,7 @@ function mapThem2()
 
 
 <body onload="myMain()">
-	<h1>Where Am I</h1>
+	<h1>Lift Knockoff Map</h1>
 	<div id="location">Trying to determine location...</div>
 
 	<div id="map_canvas"></div>
