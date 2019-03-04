@@ -163,33 +163,52 @@
 
 				for (count = 0; count < vehiclesArray.vehicles.length; count++)
 				{
+
+					if (vehiclesArray.vehicles[count].username == "WEINERMOBILE")
+					{
+						console.log("WEINNNERMOBILEEEE");
+					}
+
+
+
+
 					var theirLat = vehiclesArray.vehicles[count].lat
 					var theirLng = vehiclesArray.vehicles[count].lng
 					console.log(theirLat + "AND" + theirLng);
 
-
 					them = new google.maps.LatLng(theirLat,theirLng);
-					map.panTo(them); //??
-			
+
 					markerThem = new google.maps.Marker({
 						position: them,
+						map: map,
 						title: "They Are Here! "
+
 					});
 
 
-					//markerThem.setMap(map);
-					
+				    google.maps.event.addListener(markerThem, 'click', (function(markerThem, count) {
+				        return function() {
+				          infowindow.setContent(vehiclesArray.vehicles[count].username);
+				          infowindow.open(map, markerThem);
+				        }
+				    })(markerThem, count));
 
-				
+			
+					//map.panTo(them); //??
+			
+
+
+
+					markerThem.setMap(map);
 				}
-				markerThem.setMap(map);
+				//markerThem.setMap(map);
 
-				
+				/*
 				// Open info window on click of marker
 				google.maps.event.addListener(markerThem, 'click', function() {
 					infowindow.setContent(markerThem.title);
 					infowindow.open(map, markerThem);
-				});
+				});*/
 				
 
 /*
