@@ -34,7 +34,26 @@
 	var markerThem;
 
 
+	var myIcon = {
+	    url: "http://www.clker.com/cliparts/1/q/n/y/6/4/map-pin-purple-md.png", // url
+	    scaledSize: new google.maps.Size(25, 40), // scaled size
+	    //origin: new google.maps.Point(0,0), // origin
+	    //anchor: new google.maps.Point(0, 0) // anchor
+	};
 
+	var vehicleIcon = {
+	    url: "https://tuftsdev.github.io/WebProgramming/assignments/car.png", // url
+	    scaledSize: new google.maps.Size(20, 45), // scaled size
+	    //origin: new google.maps.Point(0,0), // origin
+	    //anchor: new google.maps.Point(0, 0) // anchor
+	};
+
+	var weinermobileIcon = {
+	    url: "https://tuftsdev.github.io/WebProgramming/assignments/weinermobile.png", // url
+	    scaledSize: new google.maps.Size(40, 40), // scaled size
+	    //origin: new google.maps.Point(0,0), // origin
+	    //anchor: new google.maps.Point(0, 0) // anchor
+	};
 
 	
 
@@ -70,7 +89,8 @@
 
 			marker = new google.maps.Marker({
 				position: me,
-				title: "You Are Here! "
+				title: "You Are Here! ",
+				icon: myIcon
 
 			});
 			marker.setMap(map);
@@ -178,17 +198,30 @@
 
 					them = new google.maps.LatLng(theirLat,theirLng);
 
-					markerThem = new google.maps.Marker({
-						position: them,
-						map: map,
-						title: "They Are Here! "
+					if (vehiclesArray.vehicles[count].username == "WEINERMOBILE")
+					{
+						console.log("WEINNNERMOBILEEEE");
 
-					});
-
-
+						markerThem = new google.maps.Marker({
+							position: them,
+							map: map,
+							title: "They Are Here! ",
+							icon: weinermobileIcon
+						});
+					}
+					else {
+						markerThem = new google.maps.Marker({
+							position: them,
+							map: map,
+							title: "They Are Here! ",
+							icon: vehicleIcon
+						});
+					}
+					// Open info window on click of marker
 				    google.maps.event.addListener(markerThem, 'click', (function(markerThem, count) {
 				        return function() {
 				          infowindow.setContent(vehiclesArray.vehicles[count].username);
+				         //infowindow.setContent(markerThem.title);
 				          infowindow.open(map, markerThem);
 				        }
 				    })(markerThem, count));
@@ -203,13 +236,6 @@
 				}
 				//markerThem.setMap(map);
 
-				/*
-				// Open info window on click of marker
-				google.maps.event.addListener(markerThem, 'click', function() {
-					infowindow.setContent(markerThem.title);
-					infowindow.open(map, markerThem);
-				});*/
-				
 
 /*
 				vehiclesSection = document.getElementById("vehicles");
