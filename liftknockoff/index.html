@@ -30,6 +30,10 @@
 	var marker;
 	var infowindow = new google.maps.InfoWindow();
 
+	
+
+
+
 
 	var them = new google.maps.LatLng(lat, lng);
 	var markerThem;
@@ -51,6 +55,11 @@
 	};
 
 	
+	var weinermobileExists = false;
+	var distToWeiner;
+	
+	var closestThemDist = 99999; // vehicle or passenger
+
 
 	function myMain() 
 	{
@@ -61,8 +70,6 @@
 
 		mapThem();
 
-
-		
 	}
 
 	function mapMe()
@@ -78,27 +85,38 @@
 
 			me = new google.maps.LatLng(lat,lng);
 
-			console.log("MEEEE");
-			//console.log(me.lat);
+	
 
 			map.panTo(me); // update map and go there
 
-			//CHANGE ME LATER
-			distanceToOther: 100;
-			distanceToWeinermobile: 1000;
+			
 
 			marker = new google.maps.Marker({
 				position: me,
-				title: "You Are Here! ",
+				title: "Me (qg9kB6z3)",
+
 				icon: myIcon
 
 			});
 			marker.setMap(map);
 
+
+			
 			// Open info window on click of marker
 			google.maps.event.addListener(marker, 'click', function() {
-				infowindow.setContent(marker.title);
-				infowindow.open(map, marker);
+				
+				// build content of infowindow
+				var username = '<h1><strong>' + marker.title + '</strong><br></h1>';
+				var part1 = '<div> Closest Weiner: ' + distToWeiner + 'miles<br></div>'
+				var part2 = '<div> Closest Vehicle: ' + closestThemDist + 'miles<br></div>'
+
+
+				var theContent = username + part1 + part2;
+				//var theContent = '<h1 class="firstHeading">Uluru</h1>'+'<div id="bodyContent">'
+				infowindow.setContent(theContent);
+				infowindow.open(map, marker, theContent);
+
+
 			});
 
 		}
@@ -112,16 +130,12 @@
 		elem.innerHTML = '<p class="fun">' + lat + ", AND " + lng + "</p>";
 	}
 
-
-
-
-
 	function mapThem() 
 	{
-		// Step 1: make an instance of XHR
+		// Make an instance of XHR
 		console.log("about to start xml request");
 		request = new XMLHttpRequest();
-		// Step 2: Make request to the JSON source
+		// Make request to the JSON source
 		request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
 		
 		request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
@@ -138,16 +152,16 @@
 			console.log("username=qg9kB6z3&lat=" + lat + "&lng=" + lng);
 			myParameters = "username=qg9kB6z3&lat=" + lat + "&lng=" + lng
 
-			// Step 4: Fire off request!!!
+			// Fire off request
 		 	request.send(myParameters);
 
 		});
 		
 
-		// Step 3: What to do when we get a response back
+		// What to do when we get a response back
 		request.onreadystatechange = function() 
 		{
-			// Step 5: parse the JSON data from response
+			// Parse the JSON data from response
 			if (request.readyState == 4 && request.status == 200) 
 			{
 				data = request.responseText;
@@ -156,10 +170,9 @@
 				responseArray = JSON.parse(request.responseText);
 	
 				console.log(responseArray);
-
 				console.log("LENGTH is " + responseArray.vehicles.length);
 
-				var weinermobileExists = false;
+				
 				
 				for (count = 0; count < responseArray.vehicles.length; count++)
 				{
@@ -182,21 +195,36 @@
 							icon: weinermobileIcon
 						});
 
-						var distToWeiner;
-						findDistance();
+					
+						// convert distance from meters to miles
+						distToWeiner = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
+						console.log("DIST to weiner is" + distToWeiner);
 
-						
+
+
+
 				
-
 					}
-					else {
+					else // it's not a weinermobile
+					{
 						markerThem = new google.maps.Marker({
 							position: them,
 							map: map,
 							title: "They Are Here! ",
 							icon: vehicleIcon
 						});
+
+						// convert distance from meters to miles
+						var distToThem = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
+						console.log("DIST is" + distToThem);
+
+						if (distToThem < closestThemDist)
+						{
+							console.log("CLOSER!!!");
+							closestThemDist = distToThem;
+						}
 					}
+
 					// Open info window on click of marker
 				    google.maps.event.addListener(markerThem, 'click', (function(markerThem, count) {
 				        return function() {
@@ -213,10 +241,14 @@
 				}
 				//markerThem.setMap(map);
 
+
+
 				if (weinermobileExists == false)
 				{
-
+					distToWeiner = "IT DOES NOT EXIST!";
 				}
+
+
 
 
 			}
@@ -224,17 +256,6 @@
 	
 	}
 
-
-
-function findDistance()
-{
-	distToWeiner = google.maps.geometry.spherical.computeDistanceBetween(me, them);
-	console.log("DIST to weiner is" + distToWeiner);
-	// convert distance from meters to miles
-	distToWeiner = distToWeiner * 0.000621371; 
-	console.log("NEWDIST to weiner is" + distToWeiner);
-
-}
 
 
 
