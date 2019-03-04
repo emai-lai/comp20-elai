@@ -8,20 +8,31 @@ html {
 /* Absolutely necessary for Google Maps version 3 */
 body {
 	height: 80%;
-	margin: 0px;
-	padding: 0px;
+	margin: 10px;
+	padding: 20px;
+}
+
+p {
+	font-size: 30px;
+}
+
+h1 {
+	color: pink;
+	font-size: 10px;
 }
 
 #map_canvas {
-	width: 90%;
 	height: 90%;
+	
 }
 
 .fun {
 	font-family: "Comic Sans MS", cursive, sans-serif;
-	font-size: 58px;
-	color: magenta;
+	font-size: 40px;
+	color: pink;
 }
+
+
 
 
 
