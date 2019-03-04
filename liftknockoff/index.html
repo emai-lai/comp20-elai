@@ -30,29 +30,59 @@
 	var infowindow = new google.maps.InfoWindow();
 
 
-	function getLocation() 
+	var them = new google.maps.LatLng(lat, lng);
+	var markerThem;
+
+
+
+
+	
+
+	function myMain() 
 	{
 		// initialize, create the map in the "map_canvas" <div>
 		map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
+		mapMe();
 
+		mapThem();
+		
+	}
 
+	function mapMe()
+	{
+		// get my location
 		navigator.geolocation.getCurrentPosition(function(somePos) 
 		{
+			// DELETE THIS LATER
 			console.log("I am here 2");
 			lat = somePos.coords.latitude;
 			lng = somePos.coords.longitude;
+			
 			printLocation();
 
+			me = new google.maps.LatLng(lat,lng);
+			map.panTo(me); // update map and go there
 
+			//CHANGE ME LATER
+			distanceToOther: 100;
+			distanceToWeinermobile: 1000;
 
-			mapMe();
+			marker = new google.maps.Marker({
+				position: me,
+				title: "You Are Here! "
 
-			// I JUST PUT THIS HERE INSTEAD
-			requestResponse();
+			});
+			marker.setMap(map);
+
+			// Open info window on click of marker
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.setContent(marker.title);
+				infowindow.open(map, marker);
+			});
+		
 		}
 		);
-		console.log("I am here 3");
 	}
 
 	function printLocation() 
@@ -62,28 +92,11 @@
 		elem.innerHTML = '<p class="fun">' + lat + ", AND " + lng + "</p>";
 	}
 
-	function mapMe()
-	{
-		me = new google.maps.LatLng(lat,lng);
-		map.panTo(me); // update map and go there
-
-		marker = new google.maps.Marker({
-			position: me,
-			title: "Here I Am!"
-		});
-		marker.setMap(map);
-
-		// Open info window on click of marker
-		google.maps.event.addListener(marker, 'click', function() {
-			infowindow.setContent(marker.title);
-			infowindow.open(map, marker);
-		});
-
-	}
 
 
 
-	function requestResponse() 
+
+	function mapThem() 
 	{
 		// Step 1: make an instance of XHR
 		console.log("about to start xml request");
@@ -108,17 +121,76 @@
 			// Step 5: parse the JSON data from response
 			if (request.readyState == 4 && request.status == 200) 
 			{
-				console.log("Got the data back!");
-
 				data = request.responseText;
 				console.log(data);
 
-				console.log("^just printed data!");
+				vehiclesArray = JSON.parse(request.responseText);
+	
+				console.log(vehiclesArray);
 
-				vehicles = JSON.parse(request.responseText);
-				//tweets = JSON.parse(request.responseText);
+				console.log(vehiclesArray.vehicles.length);
+				
 
-				console.log(vehicles);
+
+/*
+				them = new google.maps.LatLng(42.40,-71.11);
+		
+				markerThem = new google.maps.Marker({
+					position: them,
+					title: "They Are Here! "
+				});
+
+				markerThem.setMap(map);
+*/
+				
+    			//document.getElementById("demo").innerHTML = vehicles.name;
+				console.log("ELEMENT 0 lat is");
+				console.log(vehiclesArray.vehicles[0].lat);
+
+
+				//var them;
+				//var markerThem;
+/*
+				for (count = 0; count < vehiclesArray.vehicles.length; count++)
+				{
+					them[count] = new google.maps.LatLng(lat,lng);
+				}
+*/
+
+	
+
+				
+
+				for (count = 0; count < vehiclesArray.vehicles.length; count++)
+				{
+					var theirLat = vehiclesArray.vehicles[count].lat
+					var theirLng = vehiclesArray.vehicles[count].lng
+					console.log(theirLat + "AND" + theirLng);
+
+
+					them = new google.maps.LatLng(theirLat,theirLng);
+					map.panTo(them); //??
+			
+					markerThem = new google.maps.Marker({
+						position: them,
+						title: "They Are Here! "
+					});
+
+
+					//markerThem.setMap(map);
+					
+
+				
+				}
+				markerThem.setMap(map);
+
+				
+				// Open info window on click of marker
+				google.maps.event.addListener(markerThem, 'click', function() {
+					infowindow.setContent(markerThem.title);
+					infowindow.open(map, markerThem);
+				});
+				
 
 /*
 				vehiclesSection = document.getElementById("vehicles");
@@ -135,11 +207,26 @@
 		};
 	
 	}
+
+function mapThem2()
+	{
+		them = new google.maps.LatLng(42.40,-71.11);
+		
+		markerThem = new google.maps.Marker({
+			position: them,
+			title: "They Are Here! "
+		});
+
+		markerThem.setMap(map);
+
+	}
+
+
 	</script>
 </head>
 
 
-<body onload="getLocation()">
+<body onload="myMain()">
 	<h1>Where Am I</h1>
 	<div id="location">Trying to determine location...</div>
 
