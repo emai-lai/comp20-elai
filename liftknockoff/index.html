@@ -182,11 +182,24 @@
 					{
 						console.log("not a weinermobile " + count);
 
+
+
+						// convert distance from meters to miles
+						distToThem = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
+
+						if (distToThem < closestRideDist)
+						{
+							console.log("CLOSER!!!");
+							closestRideDist = distToThem;
+						}
+
+
+
 						if (responseArray.hasOwnProperty('vehicles') == true){
 							markerThem[count] = new google.maps.Marker({
 								position: them,
 								map: map,
-								title: "Vehicle (" + rides[count].username + ")",
+								title: '<div class="fun">Vehicle (' + rides[count].username + ')</div>' + distToThem + 'miles away from me',
 								icon: vehicleIcon
 							});
 
@@ -201,24 +214,10 @@
 								console.log(this);
 								console.log(this.title);
 
-								var name = this.title + '<br>';
-								var temp = distToThem + "miles away from me";
-
-								infowindow.setContent(name + temp);
+								infowindow.setContent(this.title);
 		                        infowindow.open(map,this);
 
-								//infowindow.setContent()
-								
-								//DisplayTheirInfoWindow();
-								/*console.log(markerThem[count]);
-								console.log(distToThem);
-
-		                        var name = markerThem[count].title;
-		                        var temp = distToThem;
-
-		                        infowindow.setContent(name + temp);
-		                        infowindow.open(map,this);
-		                        */
+						
 		                    });
 
 							
@@ -248,14 +247,7 @@
 						}
 
 						
-						// convert distance from meters to miles
-						distToThem = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
 
-						if (distToThem < closestRideDist)
-						{
-							console.log("CLOSER!!!");
-							closestRideDist = distToThem;
-						}
 
 
 
@@ -368,7 +360,7 @@
 	function DisplayVehicleInfoWindow()
 	{
 		// build content of infowindow
-		var username = '<p class="fun">' + markerThem.title + '<br></p>';
+		var username = '<div class="fun">' + markerThem.title + '<br></div>';
 		
 /*
 		var vehicleMessage;
