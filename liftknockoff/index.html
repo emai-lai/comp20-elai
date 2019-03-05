@@ -30,7 +30,10 @@
 	var rides;
 
 	var them = new google.maps.LatLng(lat, lng);
-	var markerThem;
+	var markerThem = new Array();
+	
+	var markerWeiner;
+
 	var distToThem;
 
 
@@ -102,6 +105,7 @@
 				DisplayMyInfoWindow();
 			});
 
+
 		});
 	}
 
@@ -152,7 +156,7 @@
 					{
 						weinermobileExists = true;
 
-						markerThem = new google.maps.Marker({
+						markerWeiner = new google.maps.Marker({
 							position: them,
 							map: map,
 							title: "WEINERMOBILE! ",
@@ -163,25 +167,64 @@
 						distToWeiner = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
 						console.log("DIST to weiner is" + distToWeiner);
 
+						google.maps.event.addListener(markerWeiner, 'click', function () {
+
+                            var name = markerWeiner.title;
+                            var temp = distToWeiner;
+
+                            infowindow.setContent(name + temp);
+                            infowindow.open(map,this);
+
+                        });
+
 					}
 					else // it's not a weinermobile
 					{
 
 						if (responseArray.hasOwnProperty('vehicles') == true){
-							markerThem = new google.maps.Marker({
+							markerThem[count] = new google.maps.Marker({
 								position: them,
 								map: map,
 								title: "Vehicle (" + rides[count].username + ")",
 								icon: vehicleIcon
 							});
+
+							console.log(markerThem[count]);
+
+							google.maps.event.addListener(markerThem[count], 'click', function () {
+								console.log(markerThem[count]);
+
+		                        var name = markerThem[count].title;
+		                        var temp = distToThem;
+
+		                        infowindow.setContent(name + temp);
+		                        infowindow.open(map,this);
+		                    });
+
+							
 						}
 						else{
-							markerThem = new google.maps.Marker({
+							markerThem[count] = new google.maps.Marker({
 								position: them,
 								map: map,
 								title: "Passenger (" + rides[count].username + ")",
 								icon: passengerIcon
 							});
+
+							console.log(markerThem[count]);
+
+							var mark = markerThem[count];
+
+							google.maps.event.addListener(mark, 'click', function () {
+								console.log(markerThem[count]);
+
+		                        var name = markerThem[count].title;
+		                        var temp = distToThem;
+
+		                        infowindow.setContent(name + temp);
+		                        infowindow.open(map,this);
+		                    });
+							
 						}
 
 						
@@ -195,42 +238,42 @@
 						}
 
 
-/*
-						// Open info window on click of marker
-				   		google.maps.event.addListener(markerThem, 'click', (function(markerThem, count) {
-				        	return function() {
 
-				        		DisplayVehicleInfoWindow();
-				       		}
-				    	})(markerThem, count));
-
-*/
 					}
-
-
-
 			
-					//map.panTo(them); //??
-			
-					markerThem.setMap(map);
+
 				}
+/*
+
+				for (count = 0; count < rides.length; count++)
+				{
+
+					google.maps.event.addListener(markerThem[count], 'click', function () {
+						console.log(markerThem[count]);
+
+                        var name = markerThem[count].title;
+                        var temp = distToThem;
+
+                        infowindow.setContent(name + temp);
+                        infowindow.open(map,this);
+                    });
+
+				}
+				*/
+
 				//markerThem.setMap(map);
-
-
 
 				if (weinermobileExists == false)
 				{
 					distToWeiner = "IT DOES NOT EXIST!";
 				}
-
-
+/*
 				// Open info window on click of marker
 				google.maps.event.addListener(this, 'click', function() {
 					DisplayMyInfoWindow();
 				});
 
-
-
+				*/
 
 			}
 		};
@@ -263,6 +306,15 @@
 		 	request.send(myParameters);
 
 		});
+	}
+
+	function DisplayTheirInfoWindow()
+	{
+		theContent = '<div>ABCDEFDLJFSLKDFJ:DSKFSDF</div>';
+		infowindow.setContent(theContent);
+		//infowindow.open(map, markerThem, theContent);
+		infowindow.open(map, this, theContent);
+
 	}
 
 	function DisplayMyInfoWindow()
