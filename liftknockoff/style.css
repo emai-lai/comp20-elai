@@ -1,13 +1,14 @@
 /* style */
 /* Absolutely necessary for Google Maps version 3 */
 html {
-	height: 80%;
+	height: 95%;
 	font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+	background-color: #9AD1D4; /* light blue */
 }
 
 /* Absolutely necessary for Google Maps version 3 */
 body {
-	height: 80%;
+	height: 95%;
 	margin: 10px;
 	padding: 20px;
 }
@@ -17,19 +18,20 @@ p {
 }
 
 h1 {
-	color: pink;
-	font-size: 10px;
+	color: #20063B; /* purple */
+	font-size: 30px;
+	background-color: #C2F9BB /* mint green */
 }
 
 #map_canvas {
-	height: 90%;
+	height: 95%;
 	
 }
 
 .fun {
-	font-family: "Comic Sans MS", cursive, sans-serif;
-	font-size: 40px;
-	color: pink;
+	font: "Helvetica Neue";
+	font-size: 20px;
+	color: #CC3363; /* pink */
 }
 
 
