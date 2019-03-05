@@ -180,6 +180,7 @@
 					}
 					else // it's not a weinermobile
 					{
+						console.log("not a weinermobile " + count);
 
 						if (responseArray.hasOwnProperty('vehicles') == true){
 							markerThem[count] = new google.maps.Marker({
@@ -189,16 +190,35 @@
 								icon: vehicleIcon
 							});
 
-							console.log(markerThem[count]);
+							console.log("is a vehicle " + count);
 
-							google.maps.event.addListener(markerThem[count], 'click', function () {
-								console.log(markerThem[count]);
+							//console.log(markerThem[count]);
+
+
+							google.maps.event.addListener(markerThem[count], 'click', function() {
+								
+								console.log("LISTEN " + count);
+								console.log(this);
+								console.log(this.title);
+
+								var name = this.title + '<br>';
+								var temp = distToThem + "miles away from me";
+
+								infowindow.setContent(name + temp);
+		                        infowindow.open(map,this);
+
+								//infowindow.setContent()
+								
+								//DisplayTheirInfoWindow();
+								/*console.log(markerThem[count]);
+								console.log(distToThem);
 
 		                        var name = markerThem[count].title;
 		                        var temp = distToThem;
 
 		                        infowindow.setContent(name + temp);
 		                        infowindow.open(map,this);
+		                        */
 		                    });
 
 							
@@ -213,12 +233,12 @@
 
 							console.log(markerThem[count]);
 
-							var mark = markerThem[count];
-
-							google.maps.event.addListener(mark, 'click', function () {
+							google.maps.event.addListener(markerThem[count], 'click', function() {
 								console.log(markerThem[count]);
 
 		                        var name = markerThem[count].title;
+
+
 		                        var temp = distToThem;
 
 		                        infowindow.setContent(name + temp);
