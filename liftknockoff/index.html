@@ -10,7 +10,7 @@
 	<script>
 	//MINE passenger: qg9kB6z3
 	//Vehicle: suFKyeZg
-	var myUsername = "suFKyeZg";
+	var myUsername = "qg9kB6z3";
 	var lat = 0;
 	var lng = 0;
 
@@ -19,7 +19,7 @@
 	var me = new google.maps.LatLng(lat, lng);
 
 	var myOptions = {
-		zoom: 13, // The larger the zoom number, the bigger the zoom
+		zoom: 13, 
 		center: me,
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
@@ -128,20 +128,23 @@
 			// Parse the JSON data from response
 			if (request.readyState == 4 && request.status == 200) 
 			{
-				data = request.responseText;
-				console.log(data);
+				//DELETE ME LATER
+				console.log(request.responseText);
 
-				responseArray = JSON.parse(data);
-
-				
+				responseArray = JSON.parse(request.responseText);
 				
 				if (responseArray.hasOwnProperty('vehicles') == true){
 					rides = responseArray.vehicles;
 				}
-				else{
+				else if (responseArray.hasOwnProperty('passengers') == true){
 					rides = responseArray.passengers;
 				}
+				else {
+					console.log("Something is wrong with the response data! No vehicles or passengers.");
+					return;
+				}
 	
+				// DELETE LATER
 				console.log(responseArray);
 				console.log("LENGTH is " + rides.length);
 
@@ -180,79 +183,29 @@
 					}
 					else // it's not a weinermobile
 					{
-						console.log("not a weinermobile " + count);
-
-
-
 						// convert distance from meters to miles
 						distToThem = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
 
 						if (distToThem < closestRideDist)
 						{
-							console.log("CLOSER!!!");
 							closestRideDist = distToThem;
 						}
 
 
 
+						// if it's a vehicle
 						if (responseArray.hasOwnProperty('vehicles') == true){
-							markerThem[count] = new google.maps.Marker({
-								position: them,
-								map: map,
-								title: '<div class="fun">Vehicle (' + rides[count].username + ')</div>' + distToThem + 'miles away from me',
-								icon: vehicleIcon
-							});
-
-							console.log("is a vehicle " + count);
-
-							//console.log(markerThem[count]);
-
-
-							google.maps.event.addListener(markerThem[count], 'click', function() {
-								
-								console.log("LISTEN " + count);
-								console.log(this);
-								console.log(this.title);
-
-								infowindow.setContent(this.title);
-		                        infowindow.open(map,this);
-
-						
-		                    });
-
+							//HERE
+							makeVehicleMarker();
 							
 						}
+						// it's a passenger
 						else{
-							markerThem[count] = new google.maps.Marker({
-								position: them,
-								map: map,
-								title: "Passenger (" + rides[count].username + ")",
-								icon: passengerIcon
-							});
-
-							console.log(markerThem[count]);
-
-							google.maps.event.addListener(markerThem[count], 'click', function() {
-								console.log(markerThem[count]);
-
-		                        var name = markerThem[count].title;
-
-
-		                        var temp = distToThem;
-
-		                        infowindow.setContent(name + temp);
-		                        infowindow.open(map,this);
-		                    });
+							makePassengerMarker();
 							
 						}
 
-						
-
-
-
-
-					}
-			
+					}			
 
 				}
 /*
@@ -332,7 +285,7 @@
 	function DisplayMyInfoWindow()
 	{
 		// build content of infowindow
-		var username = '<p class="fun">' + marker.title + '<br></p>';
+		var username = '<div class="fun">' + marker.title + '<br></div>';
 		var weinerMessage;
 		if (weinermobileExists == true){
 			weinerMessage = '<div> The Weinermobile is ' + distToWeiner + ' miles away from me!<br></div>';
@@ -346,7 +299,7 @@
 			closestVehicleMessage = '<div>No vehicles.</div>';
 		}
 		else {
-			closestVehicleMessage = '<div> Closest Vehicle: ' + closestRideDist + 'miles<br></div>'
+			closestVehicleMessage = '<div> Closest Vehicle: ' + closestRideDist + ' miles<br></div>'
 		}
 
 		// piece the content together
@@ -357,35 +310,33 @@
 		infowindow.open(map, marker, theContent);
 	}
 
-	function DisplayVehicleInfoWindow()
-	{
-		// build content of infowindow
-		var username = '<div class="fun">' + markerThem.title + '<br></div>';
-		
-/*
-		var vehicleMessage;
+	function makeVehicleMarker(){
+		markerThem[count] = new google.maps.Marker({
+			position: them,
+			map: map,
+			title: '<div class="fun">Vehicle (' + rides[count].username + ')</div>' + distToThem + ' miles away from me',
+			icon: vehicleIcon
+		});
 
-		if (closestRideDist == 99999){
-			closestVehicleMessage = '<div>No vehicles.</div>';
-		}
-		else {
-			closestVehicleMessage = '<div> Closest Vehicle: ' + closestRideDist + 'miles<br></div>'
-		}
-*/
-	
-		var message = '<div> Distance away from me: ' + distToThem + ' miles<br></div>';
-
-		// piece the content together
-		var theContent = username + message;
-
-		//var theContent = '<h1 class="firstHeading">Uluru</h1>'+'<div id="bodyContent">'
-		infowindow.setContent(theContent);
-		infowindow.open(map, markerThem, theContent);
-
+		google.maps.event.addListener(markerThem[count], 'click', function(){
+			infowindow.setContent(this.title);
+            infowindow.open(map,this);
+        });
 	}
 
+	function makePassengerMarker(){
+		markerThem[count] = new google.maps.Marker({
+			position: them,
+			map: map,
+			title: '<div class="fun">Passenger (' + rides[count].username + ')</div>' + distToThem + ' miles away from me',
+			icon: passengerIcon
+		});
 
-
+		google.maps.event.addListener(markerThem[count], 'click', function(){
+			infowindow.setContent(this.title);
+            infowindow.open(map,this);
+        });
+	}
 
 	</script>
 </head>
@@ -393,7 +344,7 @@
 
 <body onload="myMain()">
 	<h1>Emai's Lift Knockoff Map</h1>
-	<div id="location">Trying to determine location...</div>
+	<div id="location">Finding location...</div>
 	<div id="map_canvas"></div>
 
 
