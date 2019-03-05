@@ -1,45 +1,41 @@
-<!-- HTML -->
-
 <!DOCTYPE html>
-
-
 
 <html>
 <head>
 	<title>EMAI'S LIFT KNOCKOFF</title>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" charset="utf-8"/>
 	<link rel="stylesheet" href="style.css" />
-
-
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEerJkvR6bTT6i9BDteyiIXJiNXKjh7JQ&libraries=geometry"></script>
-
-
 	
 	<script>
-
+	//MINE passenger: qg9kB6z3
+	//Vehicle: suFKyeZg
+	var myUsername = "suFKyeZg";
 	var lat = 0;
 	var lng = 0;
 
+	var map;
+
 	var me = new google.maps.LatLng(lat, lng);
+
 	var myOptions = {
 		zoom: 13, // The larger the zoom number, the bigger the zoom
 		center: me,
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
-	var map;
+	
 	var marker;
 	var infowindow = new google.maps.InfoWindow();
 
-	
-
-
-
+	var rides;
 
 	var them = new google.maps.LatLng(lat, lng);
 	var markerThem;
+	var distToThem;
 
 
-	var myIcon = {
+	var myIcon = 
+	{
 	    url: "http://www.clker.com/cliparts/1/q/n/y/6/4/map-pin-purple-md.png", 
 	    scaledSize: new google.maps.Size(25, 40)
 	};
@@ -49,16 +45,22 @@
 	    scaledSize: new google.maps.Size(20, 45)
 	};
 
+	var passengerIcon = {
+		url: "https://icons-for-free.com/free-icons/png/512/1011786.png",
+		scaledSize: new google.maps.Size(40, 30)
+	}
+
 	var weinermobileIcon = {
 	    url: "https://tuftsdev.github.io/WebProgramming/assignments/weinermobile.png", 
 	    scaledSize: new google.maps.Size(40, 40)
 	};
 
 	
+
 	var weinermobileExists = false;
 	var distToWeiner;
 	
-	var closestThemDist = 99999; // vehicle or passenger
+	var closestRideDist = 99999; // vehicle or passenger
 
 
 	function myMain() 
@@ -85,79 +87,37 @@
 
 			me = new google.maps.LatLng(lat,lng);
 
-	
-
-			map.panTo(me); // update map and go there
-
-			
+			map.panTo(me); // update map and go there			
 
 			marker = new google.maps.Marker({
 				position: me,
-				title: "Me (qg9kB6z3)",
-
+				title: "Me (" + myUsername + ")",
 				icon: myIcon
 
 			});
 			marker.setMap(map);
 
-
-			
 			// Open info window on click of marker
 			google.maps.event.addListener(marker, 'click', function() {
-				
-				// build content of infowindow
-				var username = '<h1><strong>' + marker.title + '</strong><br></h1>';
-				var part1 = '<div> Closest Weiner: ' + distToWeiner + 'miles<br></div>'
-				var part2 = '<div> Closest Vehicle: ' + closestThemDist + 'miles<br></div>'
-
-
-				var theContent = username + part1 + part2;
-				//var theContent = '<h1 class="firstHeading">Uluru</h1>'+'<div id="bodyContent">'
-				infowindow.setContent(theContent);
-				infowindow.open(map, marker, theContent);
-
-
+				DisplayMyInfoWindow();
 			});
 
-		}
-		);
+		});
 	}
+
 
 	function printLocation() 
 	{
-		console.log("I am here 4");
 		elem = document.getElementById("location");
 		elem.innerHTML = '<p class="fun">' + lat + ", AND " + lng + "</p>";
 	}
 
+	
 	function mapThem() 
 	{
-		// Make an instance of XHR
-		console.log("about to start xml request");
-		request = new XMLHttpRequest();
-		// Make request to the JSON source
-		request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
+		// send my location information and retrieve info on passengers or vehicles
+		rideRequest();
 		
-		request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-		//request.setRequestHeader("Content-Type", "text/xml;charset=utf-8");
-
-
-		navigator.geolocation.getCurrentPosition(function(somePos) 
-		{
-			lat = somePos.coords.latitude;
-			lng = somePos.coords.longitude;
-			console.log("LAT" + lat);
-
-			console.log("THE PARAMETERS IM SENDING ARE");
-			console.log("username=qg9kB6z3&lat=" + lat + "&lng=" + lng);
-			myParameters = "username=qg9kB6z3&lat=" + lat + "&lng=" + lng
-
-			// Fire off request
-		 	request.send(myParameters);
-
-		});
-		
-
 		// What to do when we get a response back
 		request.onreadystatechange = function() 
 		{
@@ -167,72 +127,87 @@
 				data = request.responseText;
 				console.log(data);
 
-				responseArray = JSON.parse(request.responseText);
+				responseArray = JSON.parse(data);
+
+				
+				
+				if (responseArray.hasOwnProperty('vehicles') == true){
+					rides = responseArray.vehicles;
+				}
+				else{
+					rides = responseArray.passengers;
+				}
 	
 				console.log(responseArray);
-				console.log("LENGTH is " + responseArray.vehicles.length);
+				console.log("LENGTH is " + rides.length);
 
-				
-				
-				for (count = 0; count < responseArray.vehicles.length; count++)
+				for (count = 0; count < rides.length; count++)
 				{
-
-					var theirLat = responseArray.vehicles[count].lat
-					var theirLng = responseArray.vehicles[count].lng
-					console.log(theirLat + "AND" + theirLng); // DELETE LATER
+					var theirLat = rides[count].lat
+					var theirLng = rides[count].lng
 
 					them = new google.maps.LatLng(theirLat,theirLng);
 
-					if (responseArray.vehicles[count].username == "WEINERMOBILE")
+					if (rides[count].username == "WEINERMOBILE")
 					{
-						console.log("WEINNNERMOBILEEEE");
 						weinermobileExists = true;
 
 						markerThem = new google.maps.Marker({
 							position: them,
 							map: map,
-							title: "They Are Here! ",
+							title: "WEINERMOBILE! ",
 							icon: weinermobileIcon
 						});
 
-					
 						// convert distance from meters to miles
 						distToWeiner = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
 						console.log("DIST to weiner is" + distToWeiner);
 
-
-
-
-				
 					}
 					else // it's not a weinermobile
 					{
-						markerThem = new google.maps.Marker({
-							position: them,
-							map: map,
-							title: "They Are Here! ",
-							icon: vehicleIcon
-						});
 
+						if (responseArray.hasOwnProperty('vehicles') == true){
+							markerThem = new google.maps.Marker({
+								position: them,
+								map: map,
+								title: "Vehicle (" + rides[count].username + ")",
+								icon: vehicleIcon
+							});
+						}
+						else{
+							markerThem = new google.maps.Marker({
+								position: them,
+								map: map,
+								title: "Passenger (" + rides[count].username + ")",
+								icon: passengerIcon
+							});
+						}
+
+						
 						// convert distance from meters to miles
-						var distToThem = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
-						console.log("DIST is" + distToThem);
+						distToThem = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
 
-						if (distToThem < closestThemDist)
+						if (distToThem < closestRideDist)
 						{
 							console.log("CLOSER!!!");
-							closestThemDist = distToThem;
+							closestRideDist = distToThem;
 						}
+
+
+/*
+						// Open info window on click of marker
+				   		google.maps.event.addListener(markerThem, 'click', (function(markerThem, count) {
+				        	return function() {
+
+				        		DisplayVehicleInfoWindow();
+				       		}
+				    	})(markerThem, count));
+
+*/
 					}
 
-					// Open info window on click of marker
-				    google.maps.event.addListener(markerThem, 'click', (function(markerThem, count) {
-				        return function() {
-				          infowindow.setContent(responseArray.vehicles[count].username);
-				         //infowindow.setContent(markerThem.title);
-				          infowindow.open(map, markerThem);
-				        }
-				    })(markerThem, count));
+
 
 			
 					//map.panTo(them); //??
@@ -249,11 +224,100 @@
 				}
 
 
+				// Open info window on click of marker
+				google.maps.event.addListener(this, 'click', function() {
+					DisplayMyInfoWindow();
+				});
+
+
 
 
 			}
 		};
 	
+	}
+
+	function rideRequest()
+	{
+		// Make an instance of XHR
+		console.log("about to start xml request");
+		request = new XMLHttpRequest();
+		// Make request to the JSON source
+		request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
+		
+		request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+	
+		navigator.geolocation.getCurrentPosition(function(somePos) 
+		{
+			// make sure lat and lng are retrieved before sending request
+			lat = somePos.coords.latitude;
+			lng = somePos.coords.longitude;
+
+			myParameters = "username=" + myUsername + "&lat=" + lat + "&lng=" + lng
+
+			//DELETE THIS LATER
+			console.log("THE PARAMETERS IM SENDING ARE");
+			console.log(myParameters);
+
+			// Fire off request
+		 	request.send(myParameters);
+
+		});
+	}
+
+	function DisplayMyInfoWindow()
+	{
+		// build content of infowindow
+		var username = '<p class="fun">' + marker.title + '<br></p>';
+		var weinerMessage;
+		if (weinermobileExists == true){
+			weinerMessage = '<div> The Weinermobile is ' + distToWeiner + ' miles away from me!<br></div>';
+		}
+		else{
+			weinerMessage = '<div>The Weinermobile is nowhere to be seen</div>';
+		}
+
+		var closestVehicleMessage;
+		if (closestRideDist == 99999){
+			closestVehicleMessage = '<div>No vehicles.</div>';
+		}
+		else {
+			closestVehicleMessage = '<div> Closest Vehicle: ' + closestRideDist + 'miles<br></div>'
+		}
+
+		// piece the content together
+		var theContent = username + closestVehicleMessage + weinerMessage;
+
+		//var theContent = '<h1 class="firstHeading">Uluru</h1>'+'<div id="bodyContent">'
+		infowindow.setContent(theContent);
+		infowindow.open(map, marker, theContent);
+	}
+
+	function DisplayVehicleInfoWindow()
+	{
+		// build content of infowindow
+		var username = '<p class="fun">' + markerThem.title + '<br></p>';
+		
+/*
+		var vehicleMessage;
+
+		if (closestRideDist == 99999){
+			closestVehicleMessage = '<div>No vehicles.</div>';
+		}
+		else {
+			closestVehicleMessage = '<div> Closest Vehicle: ' + closestRideDist + 'miles<br></div>'
+		}
+*/
+	
+		var message = '<div> Distance away from me: ' + distToThem + ' miles<br></div>';
+
+		// piece the content together
+		var theContent = username + message;
+
+		//var theContent = '<h1 class="firstHeading">Uluru</h1>'+'<div id="bodyContent">'
+		infowindow.setContent(theContent);
+		infowindow.open(map, markerThem, theContent);
+
 	}
 
 
@@ -264,9 +328,8 @@
 
 
 <body onload="myMain()">
-	<h1>Lift Knockoff Map</h1>
+	<h1>Emai's Lift Knockoff Map</h1>
 	<div id="location">Trying to determine location...</div>
-
 	<div id="map_canvas"></div>
 
 
