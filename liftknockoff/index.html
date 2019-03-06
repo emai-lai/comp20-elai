@@ -8,9 +8,11 @@
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEerJkvR6bTT6i9BDteyiIXJiNXKjh7JQ&libraries=geometry"></script>
 	
 	<script>
-	//MINE passenger: qg9kB6z3
-	//Vehicle: suFKyeZg
-	var myUsername = "suFKyeZg";
+
+	// My real PASSENGER code: qg9kB6z3
+	// Random VEHICLE code I use for testing: suFKyeZg
+
+	var myUsername = "qg9kB6z3";
 	var lat = 0;
 	var lng = 0;
 
@@ -19,17 +21,11 @@
 	var me = new google.maps.LatLng(lat, lng);
 	var them = new google.maps.LatLng(lat, lng);
 
-
+	var rides; // vehicle or passenger
 	
-	
-	
-
-	var rides;
-
-
-	
+	// markers
 	var markerMe;
-	var markerThem = new Array();
+	var markerThem = new Array(); // vehicle or passenger
 	var markerWeiner = new Array();
 
 	var distToThem;
@@ -69,76 +65,58 @@
 	    scaledSize: new google.maps.Size(40, 40)
 	};
 
-	
 
-	
-
-
-	function myMain() 
-	{
+	function myMain(){
 		// initialize, create the map in the "map_canvas" <div>
 		map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
+		// map me
 		mapMe();
 
+		// map the passengers or vehicles and weinermobiles
 		mapThem();
 
 	}
 
-	function mapMe()
-	{
+	function mapMe(){
 		// get my location
-		navigator.geolocation.getCurrentPosition(function(somePos) 
-		{
+		navigator.geolocation.getCurrentPosition(function(somePos){
 		
 			lat = somePos.coords.latitude;
 			lng = somePos.coords.longitude;
-			
-			printLocation();
 
 			me = new google.maps.LatLng(lat,lng);
 
 			map.panTo(me); // update map and go there			
 
+			// create my marker
 			markerMe = new google.maps.Marker({
 				position: me,
 				title: "Me (" + myUsername + ")",
 				icon: myIcon
 
 			});
+
 			markerMe.setMap(map);
 
 			// Open info window on click of marker
-			google.maps.event.addListener(markerMe, 'click', function() {
+			google.maps.event.addListener(markerMe, 'click', function(){
 				DisplayMyInfoWindow();
 			});
 
-
 		});
 	}
-
-
-	function printLocation() 
-	{
-		elem = document.getElementById("location");
-		elem.innerHTML = '<p class="fun">' + lat + ", AND " + lng + "</p>";
-	}
-
 	
-	function mapThem() 
-	{
+	function mapThem(){
+
 		// send my location information and retrieve info on passengers or vehicles
 		rideRequest();
 		
 		// What to do when we get a response back
-		request.onreadystatechange = function() 
-		{
-			// Parse the JSON data from response
-			if (request.readyState == 4 && request.status == 200) 
-			{
-				//DELETE ME LATER
-				console.log(request.responseText);
+		request.onreadystatechange = function(){
 
+			// Parse the JSON data from response
+			if (request.readyState == 4 && request.status == 200){
 				responseArray = JSON.parse(request.responseText);
 				
 				if (responseArray.hasOwnProperty('vehicles') == true){
@@ -151,20 +129,15 @@
 					console.log("Something is wrong with the response data! No vehicles or passengers.");
 					return;
 				}
-	
-				// DELETE LATER
-				console.log(responseArray);
-				console.log("LENGTH is " + rides.length);
 
-				for (count = 0; count < rides.length; count++)
-				{
+
+				for (count = 0; count < rides.length; count++){
 					var theirLat = rides[count].lat
 					var theirLng = rides[count].lng
 
 					them = new google.maps.LatLng(theirLat,theirLng);
 
-					if (rides[count].username == "WEINERMOBILE")
-					{
+					if (rides[count].username == "WEINERMOBILE"){
 						weinermobileExists = true;
 
 						// convert distance from meters to miles
@@ -178,21 +151,18 @@
 							position: them,
 							map: map,
 							title: '<div class="fun">WEINERMOBILE!<br></div>' + distToWeiner + ' miles away from me',
-
-							
 							icon: weinermobileIcon
 						});
 
-						google.maps.event.addListener(markerWeiner[count], 'click', function () {
-
+						google.maps.event.addListener(markerWeiner[count], 'click', function (){
                             infowindow.setContent(this.title);
                             infowindow.open(map,this);
-
                         });
 
 					}
-					else // it's not a weinermobile
-					{
+					// it's not a weinermobile
+					else {
+
 						// convert distance from meters to miles
 						distToThem = 0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, them);
 
@@ -202,9 +172,7 @@
 
 						// if it's a vehicle
 						if (responseArray.hasOwnProperty('vehicles') == true){
-							//HERE
 							makeVehicleMarker();
-							
 						}
 
 						// it's a passenger
@@ -214,50 +182,35 @@
 						}
 					}			
 				}
-
-
-				//markerThem.setMap(map);
-
-
-				if (weinermobileExists == false)
-				{
-					closestWeinerDist = "IT DOES NOT EXIST!";
-				}
 			}
 		};
 	}
 
-	function rideRequest()
-	{
+	function rideRequest(){
+
 		// Make an instance of XHR
-		console.log("about to start xml request");
 		request = new XMLHttpRequest();
+
 		// Make request to the JSON source
 		request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
 		
 		request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
 	
-		navigator.geolocation.getCurrentPosition(function(somePos) 
-		{
-			// make sure lat and lng are retrieved before sending request
+		navigator.geolocation.getCurrentPosition(function(somePos){
+			// Make sure lat and lng are retrieved before sending request
 			lat = somePos.coords.latitude;
 			lng = somePos.coords.longitude;
 
-			myParameters = "username=" + myUsername + "&lat=" + lat + "&lng=" + lng
-
-			//DELETE THIS LATER
-			console.log("THE PARAMETERS IM SENDING ARE");
-			console.log(myParameters);
+			myParameters = "username=" + myUsername + "&lat=" + lat + "&lng=" + lng;
 
 			// Fire off request
 		 	request.send(myParameters);
-
 		});
 	}
 
-	function DisplayMyInfoWindow()
-	{
-		// build content of infowindow
+	function DisplayMyInfoWindow(){
+		
+		// build content of my infowindow
 		var username = '<div class="fun">' + markerMe.title + '<br></div>';
 		var weinerMessage;
 		if (weinermobileExists == true){
@@ -321,9 +274,6 @@
 
 
 </body>
-
-
-
 
 
 </html>
