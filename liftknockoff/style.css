@@ -18,14 +18,12 @@ p {
 }
 
 h1 {
-	color: #20063B; /* purple */
+	color: #C2F9BB /* mint green */
 	font-size: 30px;
-	background-color: #C2F9BB /* mint green */
 }
 
 #map_canvas {
 	height: 95%;
-	
 }
 
 .fun {
