@@ -126,7 +126,7 @@
 					rides = responseArray.passengers;
 				}
 				else {
-					console.log("Something is wrong with the response data! No vehicles or passengers.");
+					alert("Something is wrong with the response data! No vehicles or passengers.");
 					return;
 				}
 
@@ -191,8 +191,11 @@
 		request = new XMLHttpRequest();
 
 		// Make request to the JSON source
-		request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
-		
+		//request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
+		request.open("POST", "https://secret-gorge-13071.herokuapp.com/rides", true);
+		//request.open("POST", "https://localhost:3000/rides", true);
+
+
 		request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
 	
 		navigator.geolocation.getCurrentPosition(function(somePos){
