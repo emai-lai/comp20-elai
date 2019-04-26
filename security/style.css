@@ -1,0 +1,56 @@
+
+body {
+    font-family: "Helvetica";
+    font-size: 18px;
+    background-color: #f7ede2; /* off-white */
+    text-align: left;
+
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+
+h1, h2, h3 {
+    
+    
+}
+
+/* title of section */
+h1 {
+	text-align: center;
+    color: #f7ede2; /* off-white */
+	background-color: #f6bd60; /* yellow-orange */
+	font-size: 20px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+/* employer or group name */
+h2 {
+    color: #f28482; /* dark pink */
+}
+
+/* my position name */
+h3 {
+	color: #e5b3ac; /* light pink */
+    font-style: italic;
+}
+
+/* for centering on index page */
+h4 {
+    color: #f28482; /* dark pink */
+    text-align: center;
+}
+
+p {
+    color: #84a59d; /* teal */
+    font-size: 14px;
+}
+
+/* for profile picture */
+img.resize {
+    max-width: 70%;
+    max-height: 70%;
+}
+
+
