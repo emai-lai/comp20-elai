@@ -17,7 +17,7 @@ h1, h2, h3 {
 
 /* title of section */
 h1 {
-	text-align: center;
+	text-align: left;
     color: #f7ede2; /* off-white */
 	background-color: #f6bd60; /* yellow-orange */
 	font-size: 20px;
@@ -27,7 +27,7 @@ h1 {
 
 /* employer or group name */
 h2 {
-    color: #f28482; /* dark pink */
+    color: #041654; /* navy blue */
 }
 
 /* my position name */
