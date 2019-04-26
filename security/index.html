@@ -1,4 +1,3 @@
-//
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,19 +9,25 @@
 
 	<h1>Emai's Security Assessment</h1>
 
-	<h4><img class="resize" src="myphoto.JPG" alt="photo of Emai" /></h4>
-	<h4><img class="resize" src="myphoto.JPG" alt="photo of Emai" /></h4>
-
-
 	<h4>As a security consultant, I was hired to find security and privacy problems with a private car service created by Casey Culligan. This product consists of a web application server that maintains and serves the usernames, latitudes, and longitudes of passengers and vehicles, and it also includes a front-end component that is a map that the user can click on and interact with. In this hacking endeavor, I will be attempting to hack her project, while analyzing and assessing any security vulnerabilities.</h4>
 
 	<h4>Before I began  testing Casey’s application, I experimented with attacking my own code. I temporarily commented out the line that sanitized user input and then curled data with a username of “< script>alert(‘hacked’)</ script>”.  Once I understood how to do a simple XSS with my own project, I attempted to do so with Casey’s. At this point in the process I was still doing black box testing, that is, performing attacks before we exchanged source codes. Later on I explored other potential vulnerabilities including those listed on Piazza, as well as ones I found online. I ended up not using any tools that required downloading or installing a program (like Burp Suite or OWASP Zed Attack Proxy (ZAP)), but I did use curl.</h4>
 
 	<h4>I discovered that the product had a number of security and privacy issues. The web application allows users to post input in username, lat, and lng fields, and a major existing security issue is that there is no protection in the source code against users inputting malicious script in the username field. Additionally, the security of private passenger information is a concern because anyone can easily access the contents of the database, including everyone’s ID numbers and locations.</h4>
 
-	<h4>The first issue that I found is that I am able to do a cross-site scripting (XSS) attack. During black box testing (before receiving the source code), I learned that there was no sanitization for the username input data. Therefore, I can send “malicious” script such as < script>alert(‘hacked’);</ script> in the username field and because none of the characters like “<,>,(,),/,;” are removed, the script will be executed when the website is visited. This lack of input sanitization in the username is confirmed in her code. PICTURE PROOF .This is a high severity security issue, as anybody could inject malicious script, much more harmful than a simple alert box. To resolve this issue, she could remove special characters with this line of code: username = username.replace(/[^\w\s]/gi, '');  before inserting it into the database.</h4>
+	<h4><img class="resize" src="hacked.png" alt="Hacked Alert" /></h4>
 
-	<h4>The second issue I found was an injection through the URL. When visiting my partner’s website, there’s a GET /passenger.json route in which I can search for information about a given username. At first, it appears I can only search for usernames that I know exist in the database, such as a username I sent myself. Visiting https://vast-fortress-65348.herokuapp.com/passenger.json?username=emai will give me the latitude and longitude that I myself posted to the server. However, according to parameter standards, I can also search for information about users that are not me by using “ [$ne]”. So, if I visit the URL https://vast-fortress-65348.herokuapp.com/passenger.json?username[$ne}=emai I am given access to the information of all other passengers. This is another high severity security/privacy issue because essentially, anyone can retrieve private data about passengers’ names, ID numbers, and their locations, like so: PROOF. According to portswigger.net, this injection vulnerability can be protected against by using parameterized queries or prepared statements. The injections can also be prevented by using a website firewall, which is a little more complicated. </h4>
+	<h4>^ The first issue that I found is that I am able to do a cross-site scripting (XSS) attack. During black box testing (before receiving the source code), I learned that there was no sanitization for the username input data. Therefore, I can send “malicious” script such as < script>alert(‘hacked’);</ script> in the username field and because none of the characters like “<,>,(,),/,;” are removed, the script will be executed when the website is visited. This lack of input sanitization in the username is confirmed in her code. </h4>
+	
+	<h4><img class="resize" src="nosanitization.png" alt="No sanitization" /></h4>
+
+	<h4>This is a high severity security issue, as anybody could inject malicious script, much more harmful than a simple alert box. To resolve this issue, she could remove special characters with this line of code: username = username.replace(/[^\w\s]/gi, '');  before inserting it into the database.</h4>
+
+	<h4>^The second issue I found was an injection through the URL. When visiting my partner’s website, there’s a GET /passenger.json route in which I can search for information about a given username. At first, it appears I can only search for usernames that I know exist in the database, such as a username I sent myself. Visiting https://vast-fortress-65348.herokuapp.com/passenger.json?username=emai will give me the latitude and longitude that I myself posted to the server. However, according to parameter standards, I can also search for information about users that are not me by using “ [$ne]”. So, if I visit the URL https://vast-fortress-65348.herokuapp.com/passenger.json?username[$ne}=emai I am given access to the information of all other passengers. This is another high severity security/privacy issue because essentially, anyone can retrieve private data about passengers’ names, ID numbers, and their locations, like so: </h4>
+
+	<h4><img class="resize" src="passengers.png" alt="All passenger info" /></h4>
+	
+	<h4>According to portswigger.net, this injection vulnerability can be protected against by using parameterized queries or prepared statements. The injections can also be prevented by using a website firewall, which is a little more complicated. </h4>
 
 	<h4>Another privacy concern revolve around CORS, or cross-origin resource sharing. This is activated in lines 2 and 7 in the index.js source code. Because CORS allows restricted resources on a page to be accessed by another domain, this is dangerous because any domain can access private passenger information regardless of who they are. Just like in the previous example, this is a moderate to severe privacy issue.</h4>
 
@@ -33,11 +38,6 @@
 	https://www.w3schools.com/sql/sql_injection.asp
 	https://sucuri.net/website-firewall/sql-injection-protection
 	https://portswigger.net/web-security/sql-injection</h4>
-
-	<h4><a href="http://emai-lai.github.io/resume.html" target="my resume">To see my RESUME, click here</a></h4>
-
-	<h4><a href="http://emai-lai.github.io/bio.html" target="my bio">To see my BIO, click here</a></h4>
-
 
 
 </body>
